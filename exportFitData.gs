@@ -1,21 +1,14 @@
 function exportFitData() {
+    const year = 2022;
 
     // Get the access token for the current user
     let accessToken = ScriptApp.getOAuthToken();
+    let sessions = getSessions(accessToken, year);
 
-    let response = UrlFetchApp.fetch('https://www.googleapis.com/fitness/v1/users/me/sessions?startTime=2022-01-01T00%3A00%3A00%2B00%3A00&activityType=1&includeDeleted=true&endTime=2023-01-01T00%3A00%3A00%2B00%3A00', {
-        muteHttpExceptions: true,
-        headers: {
-            Authorization: 'Bearer ' + accessToken
-        },
-        'method': 'get',
-        'contentType': 'application/json',
-    });
-
-    let json = JSON.parse(response.getContentText());
+    let json = JSON.parse(sessions.getContentText());
 
     let ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName("2022");
+    let sheet = ss.getSheetByName(year.toString());
 
     for (let b = 0; b < json.session.length; b++) {
         let request = {
@@ -73,6 +66,17 @@ function exportFitData() {
             maxSpeed == -1 ? ' ' : maxSpeed,
             minSpeed == -1 ? ' ' : minSpeed]);
     }
+}
+
+function getSessions(accessToken, year) {
+    return UrlFetchApp.fetch('https://www.googleapis.com/fitness/v1/users/me/sessions?startTime='+year.toString()+'-01-01T00%3A00%3A00%2B00%3A00&activityType=1&includeDeleted=true&endTime='+(year+1).toString()+'-01-01T00%3A00%3A00%2B00%3A00', {
+        muteHttpExceptions: true,
+        headers: {
+            Authorization: 'Bearer ' + accessToken
+        },
+        'method': 'get',
+        'contentType': 'application/json',
+    });
 }
 
 function onOpen() {
