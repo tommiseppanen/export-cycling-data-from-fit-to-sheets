@@ -3,14 +3,13 @@ function exportFitData() {
 
     // Get the access token for the current user
     let accessToken = ScriptApp.getOAuthToken();
-    let sessions = getSessions(accessToken, year);
 
-    let json = JSON.parse(sessions.getContentText());
+    let sessions = JSON.parse(getSessions(accessToken, year).getContentText());
 
-    let ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName(year.toString());
+    let spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = spreadSheet.getSheetByName(year.toString());
 
-    for (let b = 0; b < json.session.length; b++) {
+    for (let b = 0; b < sessions.session.length; b++) {
         let request = {
             "aggregateBy": [
                 {
@@ -21,8 +20,8 @@ function exportFitData() {
                 }
             ],
             "bucketBySession": {},
-            "startTimeMillis": json.session[b].startTimeMillis,
-            "endTimeMillis": json.session[b].endTimeMillis
+            "startTimeMillis": sessions.session[b].startTimeMillis,
+            "endTimeMillis": sessions.session[b].endTimeMillis
         };
 
         let response2 = UrlFetchApp.fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
@@ -36,8 +35,8 @@ function exportFitData() {
 
         let json2 = JSON.parse(response2.getContentText());
 
-        let bucketDate = new Date(parseInt(json.session[b].startTimeMillis, 10));
-        let durationDays = (parseInt(json.session[b].endTimeMillis, 10) - parseInt(json.session[b].startTimeMillis, 10)) / (1000 * 60 * 60 * 24);
+        let bucketDate = new Date(parseInt(sessions.session[b].startTimeMillis, 10));
+        let durationDays = (parseInt(sessions.session[b].endTimeMillis, 10) - parseInt(sessions.session[b].startTimeMillis, 10)) / (1000 * 60 * 60 * 24);
         let avgSpeed = -1;
         let maxSpeed = -1;
         let minSpeed = -1;
@@ -58,7 +57,6 @@ function exportFitData() {
         if (json2.bucket[0].dataset[1].point.length > 0) {
             distance = json2.bucket[0].dataset[1].point[0].value[0].fpVal / 1000;
         }
-
 
         sheet.appendRow([bucketDate, durationDays,
             distance == -1 ? ' ' : distance,
