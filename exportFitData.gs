@@ -2,21 +2,21 @@ function exportFitData() {
     const year = 2022;
 
     // Get the access token for the current user
-    let accessToken = ScriptApp.getOAuthToken();
+    const accessToken = ScriptApp.getOAuthToken();
 
-    let sessions = getCyclingSessions(accessToken, year);
+    const sessions = getCyclingSessions(accessToken, year);
 
-    let spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = spreadSheet.getSheetByName(year.toString());
+    const spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = spreadSheet.getSheetByName(year.toString());
 
     for (let i = 0; i < sessions.session.length; i++) {
-        let sessionData = getSessionData(accessToken, sessions.session[i]);
-        let bucketDate = new Date(parseInt(sessions.session[i].startTimeMillis, 10));
-        let durationDays = (parseInt(sessions.session[i].endTimeMillis, 10) - parseInt(sessions.session[i].startTimeMillis, 10)) / (1000 * 60 * 60 * 24);
-        let avgSpeed = getValueFromDatasetPoint(sessionData.bucket[0].dataset[0], 0, 3.6);
-        let maxSpeed = getValueFromDatasetPoint(sessionData.bucket[0].dataset[0], 1, 3.6);
-        let minSpeed = getValueFromDatasetPoint(sessionData.bucket[0].dataset[0], 2, 3.6);
-        let distance = getValueFromDatasetPoint(sessionData.bucket[0].dataset[1], 0, 1/1000);
+        const sessionData = getSessionData(accessToken, sessions.session[i]);
+        const bucketDate = new Date(parseInt(sessions.session[i].startTimeMillis, 10));
+        const durationDays = (parseInt(sessions.session[i].endTimeMillis, 10) - parseInt(sessions.session[i].startTimeMillis, 10)) / (1000 * 60 * 60 * 24);
+        const avgSpeed = getValueFromDatasetPoint(sessionData.bucket[0].dataset[0], 0, 3.6);
+        const maxSpeed = getValueFromDatasetPoint(sessionData.bucket[0].dataset[0], 1, 3.6);
+        const minSpeed = getValueFromDatasetPoint(sessionData.bucket[0].dataset[0], 2, 3.6);
+        const distance = getValueFromDatasetPoint(sessionData.bucket[0].dataset[1], 0, 1/1000);
         sheet.appendRow([bucketDate, durationDays, distance, avgSpeed, maxSpeed, minSpeed]);
     }
 }
@@ -33,7 +33,7 @@ function getCyclingSessions(accessToken, year) {
 }
 
 function getSessionData(accessToken, session) {
-    let request = {
+    const request = {
         "aggregateBy": [
             {
                 "dataTypeName": "com.google.speed"
@@ -65,7 +65,7 @@ function getValueFromDatasetPoint(dataset, valueIndex, multiplier) {
 }
 
 function onOpen() {
-    let ui = SpreadsheetApp.getUi();
+    const ui = SpreadsheetApp.getUi();
     ui.createMenu("Google Fit")
         .addItem("Export fit data", "exportFitData")
         .addToUi();
