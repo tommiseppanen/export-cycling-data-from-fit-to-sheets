@@ -22,13 +22,13 @@ function exportFitData() {
 }
 
 function getCyclingSessions(accessToken, year) {
-    return JSON.parse(UrlFetchApp.fetch('https://www.googleapis.com/fitness/v1/users/me/sessions?startTime='+year.toString()+'-01-01T00%3A00%3A00%2B00%3A00&activityType=1&includeDeleted=true&endTime='+(year+1).toString()+'-01-01T00%3A00%3A00%2B00%3A00', {
+    return JSON.parse(UrlFetchApp.fetch("https://www.googleapis.com/fitness/v1/users/me/sessions?startTime="+year.toString()+"-01-01T00%3A00%3A00%2B00%3A00&activityType=1&includeDeleted=true&endTime="+(year+1).toString()+"-01-01T00%3A00%3A00%2B00%3A00", {
         muteHttpExceptions: true,
         headers: {
-            Authorization: 'Bearer ' + accessToken
+            Authorization: "Bearer " + accessToken
         },
-        'method': 'get',
-        'contentType': 'application/json',
+        "method": "get",
+        "contentType": "application/json",
     }).getContentText());
 }
 
@@ -47,13 +47,13 @@ function getSessionData(accessToken, session) {
         "endTimeMillis": session.endTimeMillis
     };
 
-    return JSON.parse(UrlFetchApp.fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
+    return JSON.parse(UrlFetchApp.fetch("https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate", {
         headers: {
-            Authorization: 'Bearer ' + accessToken
+            Authorization: "Bearer " + accessToken
         },
-        'method': 'post',
-        'contentType': 'application/json',
-        'payload': JSON.stringify(request, null, 2)
+        "method": "post",
+        "contentType": "application/json",
+        "payload": JSON.stringify(request, null, 2)
     }).getContentText());
 }
 
@@ -66,7 +66,7 @@ function getValueFromDatasetPoint(dataset, valueIndex, multiplier) {
 
 function onOpen() {
     let ui = SpreadsheetApp.getUi();
-    ui.createMenu('Google Fit')
-        .addItem('Export fit data', 'exportFitData')
+    ui.createMenu("Google Fit")
+        .addItem("Export fit data", "exportFitData")
         .addToUi();
 }
